@@ -1,0 +1,36 @@
+DROP DATABASE IF EXISTS Empleados;
+CREATE DATABASE Empleados;
+USE Empleados;
+
+CREATE TABLE Empleado(
+dni VARCHAR(9),
+nomemp VARCHAR(20) NOT NULL,
+salario DOUBLE NOT NULL,
+codjefe VARCHAR(9), 
+PRIMARY KEY(dni),
+FOREIGN KEY (codjefe) REFERENCES Empleado(dni)
+ON DELETE SET NULL
+ON UPDATE CASCADE
+);
+
+CREATE TABLE Baja_Empleado(
+dni VARCHAR(9),
+nomemp VARCHAR(20) NOT NULL,
+codjefe VARCHAR(9),
+salario DOUBLE NOT NULL,
+FECHA DATE NOT NULL,
+PRIMARY KEY(dni)
+);
+
+INSERT INTO Empleado VALUES ('52893997M', 'Mariano Gil' , 4500.0, NULL);
+INSERT INTO Empleado VALUES ('48893397T', 'Roberto Andrade' , 2500.0, '52893997M');
+INSERT INTO Empleado VALUES ('22893778G', 'Marta Benavide' , 2750.75, '52893997M');
+INSERT INTO Empleado VALUES ('43425395H', 'Jacinto Conesa' , 1500.45, '22893778G ');
+INSERT INTO Empleado VALUES ('42895597M', 'Antonio Diallo' , 1675.0, '22893778G ');
+INSERT INTO Empleado VALUES ('48397454B', 'Isabel Canillejas' , 3550.45, '52893997M');
+
+CREATE TRIGGER insertarBaja
+AFTER DELETE ON Empleado
+FOR EACH ROW
+	INSERT INTO Baja_Empleado VALUES(OLD.dni, OLD.nomemp, OLD.codjefe, OLD.salario, NOW());
+
